@@ -6,6 +6,7 @@ import (
 
 	"github.com/eiannone/keyboard"
 	"github.com/spf13/cobra"
+	"golang.org/x/term"
 )
 
 var rootCmd = &cobra.Command{
@@ -50,10 +51,24 @@ var rootCmd = &cobra.Command{
 			case <-done:
 				return
 			default:
-				// Do other non-blocking tasks here
+				width, height, err := terminalSize()
+				if err != nil {
+					fmt.Println("Error:", err)
+					return
+				}
+
+				fmt.Printf("Terminal size: %d columns x %d rows\n", width, height)
 			}
 		}
 	},
+}
+
+func terminalSize() (int, int, error) {
+	width, height, err := term.GetSize(int(os.Stdout.Fd()))
+	if err != nil {
+		return 0, 0, err
+	}
+	return width, height, nil
 }
 
 func Execute() {
