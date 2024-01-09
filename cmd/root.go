@@ -2,73 +2,51 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 
-	"github.com/eiannone/keyboard"
+	"github.com/gdamore/tcell"
 	"github.com/spf13/cobra"
-	"golang.org/x/term"
 )
 
 var rootCmd = &cobra.Command{
 	Use:   "tetro",
 	Short: "cli tetromino",
 	Run: func(cmd *cobra.Command, args []string) {
-		input := make(chan keyboard.Key)
-		done := make(chan struct{})
+		screen, err := tcell.NewScreen()
 
-		err := keyboard.Open()
 		if err != nil {
-			panic(err)
+			log.Fatalf("%+v", err)
 		}
-		defer func() {
-			keyboard.Close()
-		}()
+		if err := screen.Init(); err != nil {
+			log.Fatalf("%+v", err)
+		}
 
-		// handle user input
-		go func() {
-			defer close(input)
-			for {
-				_, key, err := keyboard.GetSingleKey()
-				if err != nil {
-					fmt.Println("Error reading input:", err)
-					return
-				}
-
-				if key == keyboard.KeyEsc {
-					close(done)
-				}
-
-				if key == keyboard.KeyArrowDown || key == keyboard.KeyArrowLeft || key == keyboard.KeyArrowRight || key == keyboard.KeyCtrlSpace {
-					input <- key
-				}
-			}
-		}()
+		defStyle := tcell.StyleDefault.Background(tcell.ColorBlack).Foreground(tcell.ColorWhite)
+		screen.SetStyle(defStyle)
 
 		for {
-			select {
-			case userInput := <-input:
-				fmt.Printf("Received: %c\n", userInput)
-			case <-done:
-				return
-			default:
-				width, height, err := terminalSize()
-				if err != nil {
-					fmt.Println("Error:", err)
-					return
-				}
+			switch event := screen.PollEvent().(type) {
+			case *tcell.EventResize:
+				screen.Sync()
+			case *tcell.EventKey:
+				key := event.Key()
 
-				fmt.Printf("Terminal size: %d columns x %d rows\n", width, height)
+				if key == tcell.KeyEscape || key == tcell.KeyCtrlC {
+					screen.Fini()
+					os.Exit(0)
+				} else if key == tcell.KeyDown {
+					fmt.Println("down")
+				} else if key == tcell.KeyLeft {
+					fmt.Println("left")
+				} else if key == tcell.KeyRight {
+					fmt.Println("right")
+				} else if event.Name() == "Rune[ ]" {
+					fmt.Println("space")
+				}
 			}
 		}
 	},
-}
-
-func terminalSize() (int, int, error) {
-	width, height, err := term.GetSize(int(os.Stdout.Fd()))
-	if err != nil {
-		return 0, 0, err
-	}
-	return width, height, nil
 }
 
 func Execute() {
