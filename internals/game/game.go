@@ -58,15 +58,22 @@ func setupDisplay(screen *tcell.Screen) {
 	defStyle := tcell.StyleDefault.Background(tcell.ColorBlack).Foreground(tcell.ColorWhite)
 	(*screen).SetStyle(defStyle)
 
-	for i := 0; i <= 41; i++ {
+	for i := 0; i <= 21; i++ {
 		// top and bottom
 		(*screen).SetContent(i, 0, ' ', nil, tcell.StyleDefault.Background(tcell.ColorWhite))
 		(*screen).SetContent(i, 41, ' ', nil, tcell.StyleDefault.Background(tcell.ColorWhite))
+	}
 
+	for i := 0; i <= 41; i++ {
 		// left and right
 		(*screen).SetContent(0, i, ' ', nil, tcell.StyleDefault.Background(tcell.ColorWhite))
-		(*screen).SetContent(41, i, ' ', nil, tcell.StyleDefault.Background(tcell.ColorWhite))
+		(*screen).SetContent(21, i, ' ', nil, tcell.StyleDefault.Background(tcell.ColorWhite))
 	}
+
+	(*screen).SetContent(1, 1, ' ', nil, tcell.StyleDefault.Background(tcell.ColorDarkSalmon))
+	(*screen).SetContent(20, 1, ' ', nil, tcell.StyleDefault.Background(tcell.ColorDarkSalmon))
+	(*screen).SetContent(1, 40, ' ', nil, tcell.StyleDefault.Background(tcell.ColorDarkSalmon))
+	(*screen).SetContent(20, 40, ' ', nil, tcell.StyleDefault.Background(tcell.ColorDarkSalmon))
 
 	(*screen).Show()
 }
