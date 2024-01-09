@@ -38,7 +38,7 @@ var rootCmd = &cobra.Command{
 					close(done)
 				}
 
-				if key == keyboard.KeyArrowDown || key == keyboard.KeyArrowUp || key == keyboard.KeyArrowLeft || key == keyboard.KeyArrowRight {
+				if key == keyboard.KeyArrowDown || key == keyboard.KeyArrowLeft || key == keyboard.KeyArrowRight || key == keyboard.KeyCtrlSpace {
 					input <- key
 				}
 			}
