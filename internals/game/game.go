@@ -21,8 +21,7 @@ func New() *Game {
 		log.Fatalf("%+v", err)
 	}
 
-	defStyle := tcell.StyleDefault.Background(tcell.ColorBlack).Foreground(tcell.ColorWhite)
-	screen.SetStyle(defStyle)
+	setupDisplay(&screen)
 
 	return &Game{
 		screen: screen,
@@ -53,4 +52,21 @@ func (g *Game) Start() {
 			g.screen.Show()
 		}
 	}
+}
+
+func setupDisplay(screen *tcell.Screen) {
+	defStyle := tcell.StyleDefault.Background(tcell.ColorBlack).Foreground(tcell.ColorWhite)
+	(*screen).SetStyle(defStyle)
+
+	for i := 0; i <= 41; i++ {
+		// top and bottom
+		(*screen).SetContent(i, 0, ' ', nil, tcell.StyleDefault.Background(tcell.ColorWhite))
+		(*screen).SetContent(i, 41, ' ', nil, tcell.StyleDefault.Background(tcell.ColorWhite))
+
+		// left and right
+		(*screen).SetContent(0, i, ' ', nil, tcell.StyleDefault.Background(tcell.ColorWhite))
+		(*screen).SetContent(41, i, ' ', nil, tcell.StyleDefault.Background(tcell.ColorWhite))
+	}
+
+	(*screen).Show()
 }
