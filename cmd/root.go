@@ -2,10 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 
-	"github.com/gdamore/tcell"
+	"github.com/fissilejonathan/tetromino/internals/game"
 	"github.com/spf13/cobra"
 )
 
@@ -13,41 +12,9 @@ var rootCmd = &cobra.Command{
 	Use:   "tetro",
 	Short: "cli tetromino",
 	Run: func(cmd *cobra.Command, args []string) {
-		screen, err := tcell.NewScreen()
+		game := game.New()
 
-		if err != nil {
-			log.Fatalf("%+v", err)
-		}
-		if err := screen.Init(); err != nil {
-			log.Fatalf("%+v", err)
-		}
-
-		defStyle := tcell.StyleDefault.Background(tcell.ColorBlack).Foreground(tcell.ColorWhite)
-		screen.SetStyle(defStyle)
-
-		for {
-			switch event := screen.PollEvent().(type) {
-			case *tcell.EventResize:
-				screen.Sync()
-			case *tcell.EventKey:
-				key := event.Key()
-
-				if key == tcell.KeyEscape || key == tcell.KeyCtrlC {
-					screen.Fini()
-					os.Exit(0)
-				} else if key == tcell.KeyDown {
-					screen.SetContent(50, 10, ' ', nil, tcell.StyleDefault.Background(tcell.ColorRed))
-				} else if key == tcell.KeyLeft {
-					screen.SetContent(51, 11, ' ', nil, tcell.StyleDefault.Background(tcell.ColorRed))
-				} else if key == tcell.KeyRight {
-					screen.SetContent(52, 12, ' ', nil, tcell.StyleDefault.Background(tcell.ColorRed))
-				} else if event.Name() == "Rune[ ]" {
-					screen.SetContent(53, 13, ' ', nil, tcell.StyleDefault.Background(tcell.ColorRed))
-				}
-
-				screen.Show()
-			}
-		}
+		game.Start()
 	},
 }
 
