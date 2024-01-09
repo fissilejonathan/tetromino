@@ -36,14 +36,16 @@ var rootCmd = &cobra.Command{
 					screen.Fini()
 					os.Exit(0)
 				} else if key == tcell.KeyDown {
-					fmt.Println("down")
+					screen.SetContent(50, 10, ' ', nil, tcell.StyleDefault.Background(tcell.ColorRed))
 				} else if key == tcell.KeyLeft {
-					fmt.Println("left")
+					screen.SetContent(51, 11, ' ', nil, tcell.StyleDefault.Background(tcell.ColorRed))
 				} else if key == tcell.KeyRight {
-					fmt.Println("right")
+					screen.SetContent(52, 12, ' ', nil, tcell.StyleDefault.Background(tcell.ColorRed))
 				} else if event.Name() == "Rune[ ]" {
-					fmt.Println("space")
+					screen.SetContent(53, 13, ' ', nil, tcell.StyleDefault.Background(tcell.ColorRed))
 				}
+
+				screen.Show()
 			}
 		}
 	},
