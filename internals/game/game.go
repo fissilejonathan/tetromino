@@ -21,7 +21,7 @@ func New() *Game {
 		log.Fatalf("%+v", err)
 	}
 
-	setupDisplay(&screen)
+	setupScreen(&screen)
 
 	return &Game{
 		screen: screen,
@@ -54,7 +54,7 @@ func (g *Game) Start() {
 	}
 }
 
-func setupDisplay(screen *tcell.Screen) {
+func setupScreen(screen *tcell.Screen) {
 	defStyle := tcell.StyleDefault.Background(tcell.ColorBlack).Foreground(tcell.ColorWhite)
 	(*screen).SetStyle(defStyle)
 
