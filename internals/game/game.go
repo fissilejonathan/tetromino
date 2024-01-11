@@ -2,7 +2,9 @@ package game
 
 import (
 	"log"
+	"math/rand"
 	"os"
+	"time"
 
 	"github.com/gdamore/tcell"
 )
@@ -13,6 +15,7 @@ type Game struct {
 
 func New() *Game {
 	screen, err := tcell.NewScreen()
+	screen.DisableMouse()
 
 	if err != nil {
 		log.Fatalf("%+v", err)
@@ -21,14 +24,36 @@ func New() *Game {
 		log.Fatalf("%+v", err)
 	}
 
-	setupScreen(&screen)
-
 	return &Game{
 		screen: screen,
 	}
 }
 
 func (g *Game) Start() {
+	g.setupScreen()
+
+	done := make(chan struct{})
+	defer close(done)
+
+	go func() {
+		ticker := time.NewTicker(750 * time.Millisecond)
+
+		for {
+			select {
+			case <-done:
+				return
+			case <-ticker.C:
+				startCodePoint := 0x0041 // 'A'
+				endCodePoint := 0x005A   // 'Z'
+				randomCodePoint := rand.Intn(endCodePoint-startCodePoint+1) + startCodePoint
+				randomRune := rune(randomCodePoint)
+
+				g.screen.SetContent(25, 0, randomRune, nil, tcell.StyleDefault.Foreground(tcell.ColorWhite))
+				g.screen.Show()
+			}
+		}
+	}()
+
 	for {
 		switch event := g.screen.PollEvent().(type) {
 		case *tcell.EventResize:
@@ -38,15 +63,12 @@ func (g *Game) Start() {
 
 			if key == tcell.KeyEscape || key == tcell.KeyCtrlC {
 				g.screen.Fini()
+				done <- struct{}{}
 				os.Exit(0)
 			} else if key == tcell.KeyDown {
-				g.screen.SetContent(50, 10, ' ', nil, tcell.StyleDefault.Background(tcell.ColorRed))
 			} else if key == tcell.KeyLeft {
-				g.screen.SetContent(51, 11, ' ', nil, tcell.StyleDefault.Background(tcell.ColorRed))
 			} else if key == tcell.KeyRight {
-				g.screen.SetContent(52, 12, ' ', nil, tcell.StyleDefault.Background(tcell.ColorRed))
 			} else if event.Name() == "Rune[ ]" {
-				g.screen.SetContent(53, 13, ' ', nil, tcell.StyleDefault.Background(tcell.ColorRed))
 			}
 
 			g.screen.Show()
@@ -54,26 +76,25 @@ func (g *Game) Start() {
 	}
 }
 
-func setupScreen(screen *tcell.Screen) {
+func (g *Game) updateScreen() {
+
+}
+
+func (g *Game) setupScreen() {
 	defStyle := tcell.StyleDefault.Background(tcell.ColorBlack).Foreground(tcell.ColorWhite)
-	(*screen).SetStyle(defStyle)
+	g.screen.SetStyle(defStyle)
 
 	for i := 0; i <= 21; i++ {
 		// top and bottom
-		(*screen).SetContent(i, 0, ' ', nil, tcell.StyleDefault.Background(tcell.ColorWhite))
-		(*screen).SetContent(i, 41, ' ', nil, tcell.StyleDefault.Background(tcell.ColorWhite))
+		g.screen.SetContent(i, 0, ' ', nil, tcell.StyleDefault.Background(tcell.ColorWhite))
+		g.screen.SetContent(i, 41, ' ', nil, tcell.StyleDefault.Background(tcell.ColorWhite))
 	}
 
 	for i := 0; i <= 41; i++ {
 		// left and right
-		(*screen).SetContent(0, i, ' ', nil, tcell.StyleDefault.Background(tcell.ColorWhite))
-		(*screen).SetContent(21, i, ' ', nil, tcell.StyleDefault.Background(tcell.ColorWhite))
+		g.screen.SetContent(0, i, ' ', nil, tcell.StyleDefault.Background(tcell.ColorWhite))
+		g.screen.SetContent(21, i, ' ', nil, tcell.StyleDefault.Background(tcell.ColorWhite))
 	}
 
-	(*screen).SetContent(1, 1, ' ', nil, tcell.StyleDefault.Background(tcell.ColorDarkSalmon))
-	(*screen).SetContent(20, 1, ' ', nil, tcell.StyleDefault.Background(tcell.ColorDarkSalmon))
-	(*screen).SetContent(1, 40, ' ', nil, tcell.StyleDefault.Background(tcell.ColorDarkSalmon))
-	(*screen).SetContent(20, 40, ' ', nil, tcell.StyleDefault.Background(tcell.ColorDarkSalmon))
-
-	(*screen).Show()
+	g.screen.Show()
 }
