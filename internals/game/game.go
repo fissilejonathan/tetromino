@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	yLength            = 22
+	yLength            = 21
 	xLength            = 12
 	boardDimensions    = yLength * xLength
 	numberOfTetrominos = 7
@@ -58,6 +58,7 @@ func (g *Game) Start() {
 
 	input := make(chan *tcell.EventKey)
 
+	// poll for user input
 	go func() {
 		for {
 			switch event := g.screen.PollEvent().(type) {
@@ -138,14 +139,13 @@ func (g *Game) Start() {
 
 			// Test if piece can be moved down
 			if g.doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY+1) {
-				nCurrentY++ // It can, so do it!
+				nCurrentY++
 			} else {
 				// It can't! Lock the piece in place
 				for px := 0; px < 4; px++ {
 					for py := 0; py < 4; py++ {
 						if g.tetrominos[nCurrentPiece][g.rotate(px, py, nCurrentRotation)] != '.' {
 							g.board[(nCurrentY+py)*xLength+(nCurrentX+px)] = rune(nCurrentPiece + 1)
-
 						}
 					}
 				}
@@ -198,8 +198,8 @@ func (g *Game) Start() {
 		for px := 0; px < 4; px++ {
 			for py := 0; py < 4; py++ {
 				if g.tetrominos[nCurrentPiece][g.rotate(px, py, nCurrentRotation)] != '.' {
-					x := nCurrentX + px + 2
-					y := nCurrentY + py + 2
+					x := nCurrentX + px
+					y := nCurrentY + py
 					value := rune(nCurrentPiece + 65)
 					g.screen.SetContent(x, y, value, nil, tcell.StyleDefault.Foreground(tcell.ColorWhite))
 				}
