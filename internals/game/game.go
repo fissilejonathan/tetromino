@@ -2,15 +2,22 @@ package game
 
 import (
 	"log"
-	"math/rand"
 	"os"
-	"time"
 
 	"github.com/gdamore/tcell"
 )
 
+const (
+	yLength            = 22
+	xLength            = 12
+	boardDimensions    = yLength * xLength
+	numberOfTetrominos = 7
+)
+
 type Game struct {
-	screen tcell.Screen
+	screen     tcell.Screen
+	board      [boardDimensions]rune
+	tetrominos [numberOfTetrominos]string
 }
 
 func New() *Game {
@@ -25,34 +32,14 @@ func New() *Game {
 	}
 
 	return &Game{
-		screen: screen,
+		screen:     screen,
+		board:      [boardDimensions]rune{},
+		tetrominos: [numberOfTetrominos]string{},
 	}
 }
 
 func (g *Game) Start() {
-	g.setupScreen()
-
-	done := make(chan struct{})
-	defer close(done)
-
-	go func() {
-		ticker := time.NewTicker(750 * time.Millisecond)
-
-		for {
-			select {
-			case <-done:
-				return
-			case <-ticker.C:
-				startCodePoint := 0x0041 // 'A'
-				endCodePoint := 0x005A   // 'Z'
-				randomCodePoint := rand.Intn(endCodePoint-startCodePoint+1) + startCodePoint
-				randomRune := rune(randomCodePoint)
-
-				g.screen.SetContent(25, 0, randomRune, nil, tcell.StyleDefault.Foreground(tcell.ColorWhite))
-				g.screen.Show()
-			}
-		}
-	}()
+	g.setup()
 
 	for {
 		switch event := g.screen.PollEvent().(type) {
@@ -63,7 +50,6 @@ func (g *Game) Start() {
 
 			if key == tcell.KeyEscape || key == tcell.KeyCtrlC {
 				g.screen.Fini()
-				done <- struct{}{}
 				os.Exit(0)
 			} else if key == tcell.KeyDown {
 			} else if key == tcell.KeyLeft {
@@ -76,25 +62,55 @@ func (g *Game) Start() {
 	}
 }
 
-func (g *Game) updateScreen() {
+func (g *Game) setup() {
+	///////////////////
+	// setup tetrominos
+	///////////////////
+	g.tetrominos[0] = `..X...X...X...X.`
+	g.tetrominos[1] = "..X..XX...X....."
+	g.tetrominos[2] = ".....XX..XX....."
+	g.tetrominos[3] = "..X..XX..X......"
+	g.tetrominos[4] = ".X...XX...X....."
+	g.tetrominos[5] = ".X...X...XX....."
+	g.tetrominos[6] = "..X...X..XX....."
 
-}
+	//////////////
+	// setup board
+	//////////////
+	for x := 0; x < xLength; x++ {
+		for y := 0; y < yLength; y++ {
+			value := 0
 
-func (g *Game) setupScreen() {
+			if x == 0 || x == xLength-1 || y == yLength-1 {
+				value = 9
+			}
+
+			g.board[y*xLength+x] = rune(value)
+		}
+	}
+
+	///////////////
+	// setup screen
+	///////////////
 	defStyle := tcell.StyleDefault.Background(tcell.ColorBlack).Foreground(tcell.ColorWhite)
 	g.screen.SetStyle(defStyle)
 
-	for i := 0; i <= 21; i++ {
-		// top and bottom
-		g.screen.SetContent(i, 0, ' ', nil, tcell.StyleDefault.Background(tcell.ColorWhite))
-		g.screen.SetContent(i, 41, ' ', nil, tcell.StyleDefault.Background(tcell.ColorWhite))
-	}
+	for i := 0; i < boardDimensions; i++ {
+		value := g.board[i]
 
-	for i := 0; i <= 41; i++ {
-		// left and right
-		g.screen.SetContent(0, i, ' ', nil, tcell.StyleDefault.Background(tcell.ColorWhite))
-		g.screen.SetContent(21, i, ' ', nil, tcell.StyleDefault.Background(tcell.ColorWhite))
+		x, y := getXYFromIndex(i, xLength)
+
+		if value == rune(9) {
+			g.screen.SetContent(x, y, value, nil, tcell.StyleDefault.Background(tcell.ColorWhite))
+
+		}
 	}
 
 	g.screen.Show()
+}
+
+func getXYFromIndex(index, numColumns int) (int, int) {
+	y := index / numColumns
+	x := index % numColumns
+	return x, y
 }
