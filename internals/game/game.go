@@ -289,9 +289,3 @@ func (g *Game) rotate(px, py, r int) int {
 
 	return pi
 }
-
-func (g *Game) getXYFromIndex(index, numColumns int) (int, int) {
-	y := index / numColumns
-	x := index % numColumns
-	return x, y
-}
