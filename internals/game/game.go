@@ -178,7 +178,7 @@ func (g *Game) Start() {
 				nCurrentX = xLength / 2
 				nCurrentY = 0
 				nCurrentRotation = 0
-				nCurrentPiece = rand.Intn(7) + 1
+				nCurrentPiece = rand.Intn(7)
 
 				// If piece does not fit straight away, game over!
 				bGameOver = !g.doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY)
@@ -292,16 +292,12 @@ func (g *Game) rotate(px, py, r int) int {
 	switch r % 4 {
 	case 0: // 0 degrees
 		pi = py*4 + px
-		break
 	case 1: // 90 degrees
 		pi = 12 + py - (px * 4)
-		break
 	case 2: // 180 degrees
 		pi = 15 - (py * 4) - px
-		break
 	case 3: // 270 degrees
 		pi = 3 - py + (px * 4)
-		break
 	}
 
 	return pi
