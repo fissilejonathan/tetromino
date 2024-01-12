@@ -243,19 +243,6 @@ func (g *Game) setup() {
 	///////////////
 	defStyle := tcell.StyleDefault.Background(tcell.ColorBlack).Foreground(tcell.ColorWhite)
 	g.screen.SetStyle(defStyle)
-
-	for i := 0; i < boardDimensions; i++ {
-		value := g.board[i]
-
-		x, y := g.getXYFromIndex(i, xLength)
-
-		if value == rune(9) {
-			g.screen.SetContent(x, y, value, nil, tcell.StyleDefault.Background(tcell.ColorWhite))
-
-		}
-	}
-
-	g.screen.Show()
 }
 
 func (g *Game) doesPieceFit(nTetromino, nRotation, nPosX, nPosY int) bool {
