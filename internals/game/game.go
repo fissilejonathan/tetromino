@@ -43,7 +43,7 @@ func New() *Game {
 func (g *Game) Start() {
 	g.setup()
 
-	nCurrentPiece := 0
+	nCurrentPiece := rand.Intn(7)
 	nCurrentRotation := 0
 	nCurrentX := xLength / 2
 	nCurrentY := 0
