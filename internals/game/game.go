@@ -4,6 +4,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/gdamore/tcell"
@@ -167,7 +168,6 @@ func (g *Game) Start() {
 					}
 				}
 
-				nScore += 25
 				if len(vLines) > 0 {
 					nScore += (1 << len(vLines)) * 100
 				}
@@ -217,6 +217,15 @@ func (g *Game) Start() {
 
 			vLines = vLines[:0]
 		}
+
+		strScore := strconv.Itoa(nScore)
+		runeScore := []rune{}
+
+		for _, r := range strScore {
+			runeScore = append(runeScore, r)
+		}
+
+		g.screen.SetContent(20, 2, ' ', runeScore, tcell.StyleDefault.Bold(true).Foreground(tcell.ColorWhite))
 
 		g.screen.Show()
 	}
