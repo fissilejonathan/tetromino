@@ -170,7 +170,7 @@ func (g *Game) Start() {
 				}
 
 				nScore += 25
-				if len(vLines) != 0 {
+				if len(vLines) > 0 {
 					nScore += (1 << len(vLines)) * 100
 				}
 
@@ -188,7 +188,7 @@ func (g *Game) Start() {
 		// Draw Field
 		for x := 0; x < xLength; x++ {
 			for y := 0; y < yLength; y++ {
-				value := rune(" ABCDEFG=#"[g.board[y*xLength+x]])
+				value := rune(" ABCDEFG=|"[g.board[y*xLength+x]])
 
 				g.screen.SetContent(x, y, value, nil, tcell.StyleDefault.Foreground(tcell.ColorWhite))
 			}
@@ -206,8 +206,21 @@ func (g *Game) Start() {
 			}
 		}
 
-		g.screen.Sync()
+		if len(vLines) > 0 {
+			time.Sleep(50 * time.Millisecond)
+			for _, v := range vLines {
+				for px := 1; px <= xLength-2; px++ {
+					for py := v; py > 0; py-- {
+						g.board[py*xLength+px] = g.board[(py-1)*xLength+px]
+					}
+					g.board[px] = rune(0)
+				}
+			}
 
+			vLines = vLines[:0]
+		}
+
+		g.screen.Show()
 	}
 }
 
@@ -237,12 +250,6 @@ func (g *Game) setup() {
 			g.board[y*xLength+x] = rune(value)
 		}
 	}
-
-	///////////////
-	// setup screen
-	///////////////
-	defStyle := tcell.StyleDefault.Background(tcell.ColorBlack).Foreground(tcell.ColorWhite)
-	g.screen.SetStyle(defStyle)
 }
 
 func (g *Game) doesPieceFit(nTetromino, nRotation, nPosX, nPosY int) bool {
