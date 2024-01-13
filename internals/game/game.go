@@ -118,11 +118,9 @@ func (g *Game) Start() {
 
 				nCurrentX += move
 			} else if event.Name() == "Rune[ ]" {
-			} else {
-				bRotateHold = true
 			}
 		default:
-			// do nothing
+			bRotateHold = true
 		}
 
 		// Force the piece down the playfield if it's time
