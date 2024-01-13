@@ -248,6 +248,12 @@ func (g *Game) setup() {
 			g.board[y*xLength+x] = rune(value)
 		}
 	}
+
+	g.screen.SetContent(15, 2, 'T', nil, tcell.StyleDefault.Bold(true).Underline(true).Foreground(tcell.ColorGreen))
+	g.screen.SetContent(16, 2, 'E', nil, tcell.StyleDefault.Bold(true).Underline(true).Foreground(tcell.ColorGreen))
+	g.screen.SetContent(17, 2, 'T', nil, tcell.StyleDefault.Bold(true).Underline(true).Foreground(tcell.ColorGreen))
+	g.screen.SetContent(18, 2, 'R', nil, tcell.StyleDefault.Bold(true).Underline(true).Foreground(tcell.ColorGreen))
+	g.screen.SetContent(19, 2, 'O', nil, tcell.StyleDefault.Bold(true).Underline(true).Foreground(tcell.ColorGreen))
 }
 
 func (g *Game) doesPieceFit(nTetromino, nRotation, nPosX, nPosY int) bool {
