@@ -225,7 +225,7 @@ func (g *Game) Start() {
 			runeScore = append(runeScore, r)
 		}
 
-		g.screen.SetContent(20, 2, ' ', runeScore, tcell.StyleDefault.Bold(true).Foreground(tcell.ColorWhite))
+		g.screen.SetContent(20, 20, ' ', runeScore, tcell.StyleDefault.Bold(true).Foreground(tcell.ColorWhite))
 
 		g.screen.Show()
 	}
@@ -258,11 +258,26 @@ func (g *Game) setup() {
 		}
 	}
 
-	g.screen.SetContent(15, 2, 'T', nil, tcell.StyleDefault.Bold(true).Underline(true).Foreground(tcell.ColorGreen))
-	g.screen.SetContent(16, 2, 'E', nil, tcell.StyleDefault.Bold(true).Underline(true).Foreground(tcell.ColorGreen))
-	g.screen.SetContent(17, 2, 'T', nil, tcell.StyleDefault.Bold(true).Underline(true).Foreground(tcell.ColorGreen))
-	g.screen.SetContent(18, 2, 'R', nil, tcell.StyleDefault.Bold(true).Underline(true).Foreground(tcell.ColorGreen))
-	g.screen.SetContent(19, 2, 'O', nil, tcell.StyleDefault.Bold(true).Underline(true).Foreground(tcell.ColorGreen))
+	logo := []string{
+		" ______  ______  ______  ______  ______",
+		"/\\__  _\\/\\  ___\\/\\__  _\\/\\  == \\/\\  __ \\",
+		"\\/_/\\ \\/\\ \\  __\\\\/_/\\ \\/\\ \\  __<\\ \\ \\/\\ \\",
+		"   \\ \\_\\ \\ \\_____\\ \\ \\_\\ \\ \\_\\ \\_\\ \\_____\\",
+		"    \\/_/  \\/_____/  \\/_/  \\/_/ /_/\\/_____/",
+	}
+
+	x := 15
+	y := 2
+
+	for _, line := range logo {
+		for _, c := range line {
+			x += 1
+			g.screen.SetContent(x, y, c, nil, tcell.StyleDefault.Foreground(tcell.ColorGreen))
+		}
+
+		x = 15
+		y += 1
+	}
 }
 
 func (g *Game) doesPieceFit(nTetromino, nRotation, nPosX, nPosY int) bool {
@@ -309,3 +324,11 @@ func (g *Game) rotate(px, py, r int) int {
 
 	return pi
 }
+
+/*
+ ______  ______  ______  ______  ______
+/\__  _\/\  ___\/\__  _\/\  == \/\  __ \
+\/_/\ \/\ \  __\\/_/\ \/\ \  __<\ \ \/\ \
+   \ \_\ \ \_____\ \ \_\ \ \_\ \_\ \_____\
+    \/_/  \/_____/  \/_/  \/_/ /_/\/_____/
+*/
