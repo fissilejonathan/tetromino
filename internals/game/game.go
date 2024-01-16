@@ -267,7 +267,7 @@ func (g *Game) setup() {
 	}
 
 	x := 15
-	y := 2
+	y := 6
 
 	for _, line := range logo {
 		for _, c := range line {
@@ -278,6 +278,12 @@ func (g *Game) setup() {
 		x = 15
 		y += 1
 	}
+
+	g.screen.SetContent(14, 20, 'S', nil, tcell.StyleDefault.Bold(true).Foreground(tcell.ColorWhite))
+	g.screen.SetContent(15, 20, 'C', nil, tcell.StyleDefault.Bold(true).Foreground(tcell.ColorWhite))
+	g.screen.SetContent(16, 20, 'O', nil, tcell.StyleDefault.Bold(true).Foreground(tcell.ColorWhite))
+	g.screen.SetContent(17, 20, 'R', nil, tcell.StyleDefault.Bold(true).Foreground(tcell.ColorWhite))
+	g.screen.SetContent(18, 20, 'E', nil, tcell.StyleDefault.Bold(true).Foreground(tcell.ColorWhite))
 }
 
 func (g *Game) doesPieceFit(nTetromino, nRotation, nPosX, nPosY int) bool {
